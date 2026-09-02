@@ -1,8 +1,66 @@
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.xr.enabled = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
+
+const sceneStatus = document.getElementById('sceneStatus');
+const xrButton = document.getElementById('xrButton');
+const fullscreenButton = document.getElementById('fullscreenButton');
+
+const updateFullscreenLabel = () => {
+    fullscreenButton.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen';
+};
+
+fullscreenButton.addEventListener('click', async () => {
+    if (document.fullscreenElement) {
+        await document.exitFullscreen();
+    } else {
+        await document.documentElement.requestFullscreen();
+    }
+    updateFullscreenLabel();
+});
+
+document.addEventListener('fullscreenchange', updateFullscreenLabel);
+
+const enableXR = async () => {
+    if (!navigator.xr) {
+        sceneStatus.textContent = 'XR requires a compatible browser';
+        return;
+    }
+
+    try {
+        if (await navigator.xr.isSessionSupported('immersive-vr')) {
+            xrButton.disabled = false;
+            xrButton.textContent = 'Enter XR';
+            sceneStatus.textContent = 'XR ready';
+        } else {
+            sceneStatus.textContent = 'Immersive XR is unavailable';
+        }
+    } catch {
+        sceneStatus.textContent = 'XR support could not be checked';
+    }
+};
+
+xrButton.addEventListener('click', async () => {
+    try {
+        const session = await navigator.xr.requestSession('immersive-vr', {
+            optionalFeatures: ['local-floor']
+        });
+        session.addEventListener('end', () => {
+            xrButton.textContent = 'Enter XR';
+            sceneStatus.textContent = 'XR session ended';
+        });
+        await renderer.xr.setSession(session);
+        xrButton.textContent = 'In XR';
+        sceneStatus.textContent = 'Move your head to explore';
+    } catch {
+        sceneStatus.textContent = 'XR session could not start';
+    }
+});
+
+enableXR();
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 50, 100);

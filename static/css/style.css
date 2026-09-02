@@ -73,6 +73,37 @@ canvas {
     line-height: 1.6;
 }
 
+.scene-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    flex-direction: column;
+    pointer-events: auto;
+}
+
+.scene-actions button {
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(0, 0, 0, 0.45);
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.scene-actions button:hover:not(:disabled),
+.scene-actions button:focus-visible {
+    background: white;
+    color: black;
+}
+
+.scene-actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
 #sidebar {
     position: absolute;
     top: 0;
@@ -171,5 +202,9 @@ h2 {
     .scene-status {
         max-width: 120px;
         font-size: 9px;
+    }
+
+    .scene-actions {
+        gap: 5px;
     }
 }
