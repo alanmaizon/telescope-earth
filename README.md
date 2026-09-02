@@ -30,6 +30,8 @@ The project is intentionally framework-free:
 
 The model is a visual scale study, not a physically accurate simulation. Planet sizes and distances are tuned for legibility in one viewport; rotation values provide motion and the camera controls provide exploration.
 
+The model also uses the WebXR API through Three.js. The **Enter XR** control is enabled only when the browser reports support for an immersive VR session. The **Fullscreen** control uses the standard Fullscreen API and remains available independently of XR. Both features require a secure context such as GitHub Pages; local testing should use `localhost` rather than opening the files directly.
+
 ## Interaction flow
 
 1. `OrbitControls` handles camera orbiting, damping, and zoom.
@@ -87,6 +89,7 @@ window.addEventListener('resize', resize);
 - Call out the data-driven `planets` array: geometry, media, audio, and facts are connected through one object model.
 - Discuss the deliberate compromise between scientific scale and visual communication.
 - Mention static deployment: there is no runtime server, build pipeline, or framework dependency.
+- Demonstrate progressive enhancement: desktop users keep the orbit controls, while compatible headsets get an immersive XR session from the same renderer and scene.
 - Suggested next steps: move planet data to JSON, add keyboard focus selection, lazy-load media, and use physically based materials with lighting for richer surfaces.
 
 ## Deployment
