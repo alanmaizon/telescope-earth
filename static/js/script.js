@@ -14,12 +14,16 @@ const updateFullscreenLabel = () => {
 };
 
 fullscreenButton.addEventListener('click', async () => {
-    if (document.fullscreenElement) {
-        await document.exitFullscreen();
-    } else {
-        await document.documentElement.requestFullscreen();
+    try {
+        if (document.fullscreenElement) {
+            await document.exitFullscreen();
+        } else {
+            await document.documentElement.requestFullscreen();
+        }
+        updateFullscreenLabel();
+    } catch {
+        sceneStatus.textContent = 'Fullscreen is unavailable';
     }
-    updateFullscreenLabel();
 });
 
 document.addEventListener('fullscreenchange', updateFullscreenLabel);
