@@ -1,7 +1,8 @@
 const scene = new THREE.Scene();
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+document.getElementById('app').appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 50, 100);
@@ -239,9 +240,11 @@ const planets = [
 
 // Function to close the sidebar
 document.getElementById('closeButton').addEventListener('click', function() {
-    document.getElementById('sidebar').style.display = 'none';
+    const sidebar = document.getElementById('sidebar');
+    sidebar.style.display = 'none';
+    sidebar.setAttribute('aria-hidden', 'true');
     if (currentAudio) {
-        currentAudio.pause();  // Stop playing the audio if the sidebar is closed
+        currentAudio.pause();
     }
 });
 
@@ -281,7 +284,9 @@ function playPlanetAudio(audioPath) {
 
     // Create a new audio element and play it
     currentAudio = new Audio(audioPath);
-    currentAudio.play();
+    currentAudio.play().catch(() => {
+        document.getElementById('sceneStatus').textContent = 'Planet selected';
+    });
 }
 
 // Updated displayPlanetInfo function to include audio
@@ -295,9 +300,10 @@ function displayPlanetInfo(planet) {
     planetName.textContent = planet.name;
     planetInfo.textContent = planet.info;
     planetGif.src = planet.gif;
+    planetGif.alt = `${planet.name} animation`;
 
     // Populate the details table
-    planetDetailsTable.innerHTML = `
+    planetDetailsTable.querySelector('tbody').innerHTML = `
         <tr><th>Diameter</th><td>${planet.details.diameter}</td></tr>
         <tr><th>Mass</th><td>${planet.details.mass}</td></tr>
         <tr><th>Moons</th><td>${planet.details.moons}</td></tr>
@@ -308,6 +314,7 @@ function displayPlanetInfo(planet) {
     `;
 
     sidebar.style.display = 'block';
+    sidebar.setAttribute('aria-hidden', 'false');
 
     if (selectedPlanet) {
         scene.remove(selectedPlanet.label);
@@ -325,28 +332,6 @@ function displayPlanetInfo(planet) {
 
 
 
-
-document.addEventListener('mousedown', onDocumentMouseDown, false);
-
-function onDocumentMouseDown(event) {
-    event.preventDefault();
-
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersects = raycaster.intersectObjects(planets.map(p => p.object));
-
-    if (intersects.length > 0) {
-        const selected = intersects[0].object;
-        selectedPlanet = planets.find(p => p.object === selected);
-        
-        if (selectedPlanet) {
-            displayPlanetInfo(selectedPlanet);
-        }
-    }
-}
 
 function createLabel(text) {
     const canvas = document.createElement('canvas');
@@ -387,6 +372,7 @@ window.addEventListener('resize', () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
