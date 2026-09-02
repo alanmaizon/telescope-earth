@@ -1,261 +1,247 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Earth</title>
-  <style>
-    :root {
-      --bg: #030712;
-      --bg-2: #08182d;
-      --glow: rgba(82, 161, 255, 0.45);
-      --blue: #5ec4ff;
-      --ocean: #0f6fdd;
-      --ocean-2: #0a4ea6;
-      --land: #7ad97a;
-      --land-2: #3fb06f;
-      --text: #eef6ff;
-      --muted: rgba(238, 246, 255, 0.75);
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, var(--bg-2) 0%, var(--bg) 45%, #01050b 100%);
-      color: var(--text);
-      font-family: Inter, "Segoe UI", sans-serif;
-      overflow: hidden;
+    <meta charset="utf-8">
+    <title>Cosmic Scale</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     body {
-      display: grid;
-      place-items: center;
+        background: #000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    .scene {
-      position: relative;
-      width: min(92vw, 1000px);
-      height: min(92vh, 760px);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
+    #__bundler_loading {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #666;
+        background: #fff;
+        padding: 8px 14px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        z-index: 10000;
     }
 
-    .stars, .stars::before, .stars::after {
-      content: "";
-      position: absolute;
-      inset: -15%;
-      background-repeat: repeat;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.9) 0 1.5px, transparent 2px),
-        radial-gradient(circle, rgba(160,200,255,0.8) 0 1.2px, transparent 1.5px),
-        radial-gradient(circle, rgba(255,255,255,0.7) 0 1px, transparent 1.3px);
-      background-size: 180px 180px;
-      background-position: 0 0, 75px 35px, 35px 110px;
-      opacity: 0.9;
-      animation: drift 22s linear infinite;
+    #__bundler_thumbnail {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000000;
+        z-index: 9999;
     }
 
-    .stars::before {
-      transform: scale(1.2);
-      opacity: 0.55;
-      animation-duration: 26s;
+    #__bundler_thumbnail svg {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
-    .stars::after {
-      transform: scale(1.5);
-      opacity: 0.4;
-      animation-duration: 31s;
+    #__bundler_placeholder {
+        color: #999;
+        font-size: 14px;
     }
-
-    .earth-shell {
-      position: relative;
-      width: min(54vw, 420px);
-      aspect-ratio: 1;
-      display: grid;
-      place-items: center;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .earth-glow {
-      position: absolute;
-      width: 105%;
-      height: 105%;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(90, 201, 255, 0.7) 0%, rgba(90, 201, 255, 0.18) 35%, rgba(90, 201, 255, 0) 70%);
-      filter: blur(26px);
-    }
-
-    .earth {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 32% 30%, rgba(164, 225, 255, 0.9) 0 8%, transparent 9%),
-        radial-gradient(circle at 30% 30%, #c8f4ff 0%, #83d0ff 10%, #2a88d8 20%, #0d5eae 40%, #0a2e67 60%, #06192f 100%);
-      box-shadow:
-        inset -30px -35px 55px rgba(0, 0, 0, 0.52),
-        inset 18px 18px 32px rgba(180, 235, 255, 0.25),
-        0 0 40px rgba(76, 161, 255, 0.35);
-      overflow: hidden;
-      animation: spin 18s linear infinite;
-    }
-
-    .earth::before,
-    .earth::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-    }
-
-    .earth::before {
-      background:
-        radial-gradient(circle at 20% 40%, rgba(48, 173, 92, 0.9) 0 7%, transparent 7.5%),
-        radial-gradient(circle at 35% 50%, rgba(41, 157, 89, 0.9) 0 9%, transparent 9.5%),
-        radial-gradient(circle at 53% 62%, rgba(46, 162, 82, 0.95) 0 10%, transparent 10.5%),
-        radial-gradient(circle at 72% 48%, rgba(44, 169, 92, 0.9) 0 8%, transparent 8.5%),
-        radial-gradient(circle at 68% 36%, rgba(30, 126, 68, 0.8) 0 7%, transparent 7.5%),
-        radial-gradient(circle at 50% 25%, rgba(49, 179, 92, 0.85) 0 8%, transparent 8.8%);
-      mix-blend-mode: multiply;
-      opacity: 0.95;
-    }
-
-    .earth::after {
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.08),
-        rgba(255,255,255,0.08) 2px,
-        transparent 2px,
-        transparent 4px
-      );
-      transform: rotate(12deg);
-      opacity: 0.35;
-    }
-
-    .orbit {
-      position: absolute;
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 50%;
-      inset: 11%;
-      transform: rotateX(70deg);
-    }
-
-    .orbit:nth-of-type(2) {
-      inset: 18%;
-    }
-
-    .title-block {
-      position: absolute;
-      left: 50%;
-      bottom: 115px;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 2;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      font-size: 12px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 4vw, 4.5rem);
-      letter-spacing: -0.06em;
-      font-weight: 700;
-    }
-
-    .link-card {
-      position: absolute;
-      left: 50%;
-      bottom: 30px;
-      transform: translateX(-50%);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.9rem 1.4rem;
-      border-radius: 999px;
-      color: var(--text);
-      text-decoration: none;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 12px 35px rgba(0,0,0,0.28);
-      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-      font-size: 0.96rem;
-      letter-spacing: 0.03em;
-      z-index: 2;
-    }
-
-    .link-card:hover {
-      transform: translateX(-50%) translateY(-2px);
-      background: rgba(255,255,255,0.12);
-      border-color: rgba(125, 198, 255, 0.8);
-    }
-
-    @keyframes spin {
-      0% { background-position: 0 0; }
-      100% { background-position: 1000px 0; }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
-    }
-
-    @keyframes drift {
-      from { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(-12px, 18px, 0) scale(1.18); }
-      to { transform: translate3d(0, 0, 0) scale(1); }
-    }
-
-    @media (max-width: 640px) {
-      .scene {
-        width: 100vw;
-        height: 100vh;
-      }
-
-      .earth-shell {
-        width: min(72vw, 300px);
-      }
-
-      .title-block {
-        bottom: 100px;
-      }
-
-      .link-card {
-        width: min(80vw, 320px);
-      }
-    }
-  </style>
+    </style>
+    <noscript>
+        <style>
+        #__bundler_loading {
+            display: none;
+        }
+        </style>
+        <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+              This page requires JavaScript to display.
+            </div>
+    </noscript>
 </head>
 <body>
-  <main class="scene" aria-label="Earth feature scene">
-    <div class="stars" aria-hidden="true"></div>
-
-    <div class="earth-shell" aria-label="Spinning Earth">
-      <div class="earth-glow" aria-hidden="true"></div>
-      <div class="earth" aria-hidden="true"></div>
-      <div class="orbit" aria-hidden="true"></div>
-      <div class="orbit" aria-hidden="true"></div>
+    <div id="__bundler_thumbnail">
+        <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="600" cy="400" r="220" fill="#f2f2f2"></circle>
+            <circle cx="900" cy="400" r="12" fill="#f2f2f2"></circle>
+            <circle cx="300" cy="200" r="2" fill="#f2f2f2"></circle>
+            <circle cx="200" cy="600" r="2" fill="#f2f2f2"></circle>
+            <circle cx="1000" cy="150" r="2" fill="#f2f2f2"></circle>
+        </svg>
     </div>
+    <div id="__bundler_loading">Unpacking...</div>
 
-    <div class="title-block">
-      <p class="eyebrow">Planetary focus</p>
-      <h1>Earth</h1>
-    </div>
+    <script>
 
-    <a class="link-card" href="./2.html">
-      See the complete solar system
-    </a>
-  </main>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const loading = document.getElementById('__bundler_loading');
+        function setStatus(msg) {
+            if (loading)
+                loading.textContent = msg;
+        }
+
+        // Error sink persists across replaceWith since it's on window, not the DOM.
+        window.addEventListener('error', function(e) {
+            var p = document.body || document.documentElement;
+            var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+            d.id = '__bundler_err';
+            d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+            d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+            '[bundle] ' + (e.message || e.type) +
+            (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+        }, true);
+
+        try {
+            const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+            const templateEl = document.querySelector('script[type="__bundler/template"]');
+            if (!manifestEl || !templateEl) {
+                setStatus('Error: missing bundle data');
+                console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+                return;
+            }
+
+            const manifest = JSON.parse(manifestEl.textContent);
+            let template = JSON.parse(templateEl.textContent);
+
+            const uuids = Object.keys(manifest);
+            setStatus('Unpacking ' + uuids.length + ' assets...');
+
+            const blobUrls = {};
+            await Promise.all(uuids.map(async (uuid) => {
+                const entry = manifest[uuid];
+                try {
+                    const binaryStr = atob(entry.data);
+                    const bytes = new Uint8Array(binaryStr.length);
+                    for (let i = 0; i < binaryStr.length; i++)
+                        bytes[i] = binaryStr.charCodeAt(i);
+
+                    let finalBytes = bytes;
+                    if (entry.compressed) {
+                        if (typeof DecompressionStream !== 'undefined') {
+                            const ds = new DecompressionStream('gzip');
+                            const writer = ds.writable.getWriter();
+                            const reader = ds.readable.getReader();
+                            writer.write(bytes);
+                            writer.close();
+                            const chunks = [];
+                            let totalLen = 0;
+                            while (true) {
+                                const {done, value} = await reader.read();
+                                if (done)
+                                    break;
+                                chunks.push(value);
+                                totalLen += value.length;
+                            }
+                            finalBytes = new Uint8Array(totalLen);
+                            let offset = 0;
+                            for (const chunk of chunks) {
+                                finalBytes.set(chunk, offset);
+                                offset += chunk.length;
+                            }
+                        } else {
+                            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+                        }
+                    }
+
+                    blobUrls[uuid] = URL.createObjectURL(new Blob([finalBytes], {
+                        type: entry.mime
+                    }));
+                } catch (err) {
+                    console.error('Failed to decode asset ' + uuid + ':', err);
+                    blobUrls[uuid] = URL.createObjectURL(new Blob([], {
+                        type: entry.mime
+                    }));
+                }
+            }));
+
+            const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+            const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+            const resourceMap = {};
+            for (const entry of extResources) {
+                if (blobUrls[entry.uuid])
+                    resourceMap[entry.id] = blobUrls[entry.uuid];
+            }
+
+            setStatus('Rendering...');
+            for (const uuid of uuids)
+                template = template.split(uuid).join(blobUrls[uuid]);
+
+            // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+            // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+            // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+            template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+            const resourceScript = '<script>window.__resources = ' +
+            JSON.stringify(resourceMap).split('</' + 'script>').join('<\\/' + 'script>') +
+            ';</' + 'script>';
+            // Inject after <head> so the DOCTYPE stays first; prepending the script
+            // would push the parser into quirks mode. DOMParser always emits a <head>
+            // (synthesizing one if the source HTML omitted it) but may carry
+            // attributes through, so match the full opening tag. slice() rather than
+            // replace() keeps us clear of $-pattern substitution in resourceScript.
+            const headOpen = template.match(/<head[^>]*>/i);
+            if (headOpen) {
+                const i = headOpen.index + headOpen[0].length;
+                template = template.slice(0, i) + resourceScript + template.slice(i);
+            }
+
+            // Parse the template and swap the root element. Scripts inserted via
+            // DOMParser/replaceWith are inert per spec — re-create each with
+            // createElement so they execute, awaiting onload for src scripts to
+            // preserve ordering (React before ReactDOM before Babel before text/babel).
+            const doc = new DOMParser().parseFromString(template, 'text/html');
+            document.documentElement.replaceWith(doc.documentElement);
+            const dead = Array.from(document.scripts);
+            for (const old of dead) {
+                const s = document.createElement('script');
+                for (const a of old.attributes)
+                    s.setAttribute(a.name, a.value);
+                s.textContent = old.textContent;
+                // text/babel scripts with a src: fetch and inline. transformScriptTags
+                // does XHR against the src, but blob:null/ from a file:// origin is
+                // silently dropped. Inlining makes it a plain inline babel script,
+                // which transformScriptTags handles unconditionally.
+                if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+                    const r = await fetch(s.src);
+                    s.textContent = await r.text();
+                    s.removeAttribute('src');
+                }
+                const p = s.src ? new Promise(function(r) {
+                    s.onload = s.onerror = r;
+                }) : null;
+                old.replaceWith(s);
+                if (p)
+                    await p;
+            }
+            // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+            // which fired before we swapped the document. Trigger manually if present.
+            if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+                window.Babel.transformScriptTags();
+            }
+        } catch (err) {
+            setStatus('Error unpacking: ' + err.message);
+            console.error('Bundle unpack error:', err);
+        }
+    });
+    </script>
+
+    <script type="__bundler/manifest">
+    {"bc1dc526-2313-419a-83d8-53d642968453":{"mime":"text/javascript","compressed":true,"data":"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"}}
+      </script>
+
+    <script type="__bundler/ext_resources">
+    []
+    </script>
+
+    <script type="__bundler/template">
+    "<!DOCTYPE html>\n<html lang=\"en\"><head>\n<meta charset=\"utf-8\">\n<title>Cosmic Scale<\u002Ftitle>\n\n<style>\n  html,body{margin:0;background:#000;color:#f2f2f2;font-family:Helvetica,\"Helvetica Neue\",Arial,sans-serif;overflow:hidden}\n  #stage{position:fixed;inset:0;background:#000}\n  #videoHolder{position:absolute;left:0;right:0;top:0;bottom:44px;display:flex;align-items:center;justify-content:center}\n  #wrap{width:1600px;height:900px;transform-origin:center center;flex-shrink:0}\n  #video{width:1600px;height:900px;position:relative;background:#0a0a0a;overflow:hidden}\n  #bar{position:absolute;left:0;right:0;bottom:0;height:44px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;box-sizing:border-box;color:#ddd;font:12px Helvetica,Arial,sans-serif}\n  #pp{background:#f2f2f2;color:#000;border:0;width:32px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}\n  #pp svg{width:12px;height:12px;fill:#000}\n  #scrubWrap{flex:1;position:relative;height:28px;display:flex;align-items:center;cursor:pointer}\n  #track{position:absolute;left:0;right:0;height:3px;background:#333}\n  #prog{position:absolute;left:0;height:3px;background:#f2f2f2;width:0%}\n  #hoverMark{position:absolute;top:-2px;width:2px;height:7px;background:#888;opacity:0;pointer-events:none}\n  #tip{position:absolute;bottom:36px;transform:translateX(-50%);background:#f2f2f2;color:#000;font:700 11px \"Helvetica Neue\",Helvetica;letter-spacing:.15em;padding:4px 8px;opacity:0;pointer-events:none;white-space:nowrap}\n  .star{position:absolute;background:#fff;border-radius:50%}\n  .circle{position:absolute;border-radius:50%;background:#f2f2f2;left:50%;top:50%;transform:translate(-50%,-50%)}\n  .ring{position:absolute;border:2px solid #f2f2f2;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}\n  .label{position:absolute;color:#f2f2f2;letter-spacing:-.01em;line-height:1.02}\n  .mono{font-family:\"Helvetica Neue\",Helvetica,Arial,sans-serif;letter-spacing:.2em}\n  .diff{mix-blend-mode:difference;color:#fff}\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n<div id=\"stage\">\n  <div id=\"videoHolder\"><div id=\"wrap\">\n    <div id=\"video\" data-screen-label=\"00:00\"><div id=\"scene\"><\u002Fdiv><\u002Fdiv>\n  <\u002Fdiv><\u002Fdiv>\n  <div id=\"bar\">\n    <button id=\"pp\" aria-label=\"Play\"><svg id=\"ppIcon\" viewBox=\"0 0 12 12\"><polygon points=\"2,1 11,6 2,11\"><\u002Fpolygon><\u002Fsvg><\u002Fbutton>\n    <button id=\"rw\" aria-label=\"Restart\" style=\"background:#f2f2f2;color:#000;border:0;width:32px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0\"><svg viewBox=\"0 0 12 12\" style=\"width:12px;height:12px;fill:#000\"><polygon points=\"10,1 2,6 10,11\"><\u002Fpolygon><rect x=\"1\" y=\"1\" width=\"1.5\" height=\"10\"><\u002Frect><\u002Fsvg><\u002Fbutton>\n    <span id=\"t\" class=\"mono\">0:00 / 0:00<\u002Fspan>\n    <div id=\"scrubWrap\">\n      <div id=\"track\"><\u002Fdiv>\n      <div id=\"prog\"><\u002Fdiv>\n      <div id=\"hoverMark\"><\u002Fdiv>\n      <div id=\"tip\"><\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fdiv>\n\n<script src=\"script.js\"><\u002Fscript>\\n<script src=\"bc1dc526-2313-419a-83d8-53d642968453\"><\u002Fscript>\n<script>\nconst scene=document.getElementById('scene');\nconst video=document.getElementById('video');\nconst clamp=(v,a,b)=>Math.max(a,Math.min(b,v));\nconst easeOut=t=>1-Math.pow(1-t,3);\nconst easeInOut=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;\n// breathing helper — subtle continuous motion\nconst breathe=(absT,amp=1,speed=1)=>Math.sin(absT*speed)*amp;\n\nfunction addStars(){\n  for(let i=0;i<180;i++){\n    const s=document.createElement('div');s.className='star';\n    const big=Math.random()<.08;\n    s.style.left=Math.random()*1600+'px';\n    s.style.top=Math.random()*900+'px';\n    s.style.width=s.style.height=(big?3:1)+'px';\n    s.style.opacity=(Math.random()*.6+.2);\n    s.dataset.tw=Math.random()*6;\n    scene.appendChild(s);\n  }\n}\nfunction twinkle(absT){\n  scene.querySelectorAll('.star').forEach(s=>{\n    const ph=parseFloat(s.dataset.tw);\n    s.style.opacity=.3+Math.abs(Math.sin(absT*1.5+ph))*.5;\n  });\n}\n\nconst el=(tag,cls,style,text)=>{\n  const e=document.createElement(tag);\n  if(cls)e.className=cls;\n  if(style)Object.assign(e.style,style);\n  if(text!=null)e.textContent=text;\n  scene.appendChild(e);return e;\n};\n\n// Animated title helper — words rise in, then subtly drift\nfunction bigTitle(text,{top='50%',size=140,delay=0,diff=false}={}){\n  const wrap=el('div',(diff?'label diff':'label'),{\n    left:'50%',top,transform:'translate(-50%,-50%)',\n    fontSize:size+'px',fontWeight:'900',letterSpacing:'-.035em',\n    whiteSpace:'nowrap',display:'flex'\n  });\n  const chars=[];\n  text.split('').forEach(ch=>{\n    const s=document.createElement('span');\n    s.textContent=ch===' '?'\\u00A0':ch;\n    s.style.cssText='display:inline-block;will-change:transform,opacity,filter;transform-origin:50% 100%';\n    wrap.appendChild(s);\n    chars.push({el:s,seed:Math.random()});\n  });\n  return (t,absT)=>{\n    chars.forEach((c,i)=>{\n      const k=clamp((t-delay-i*.012)*6,0,1);\n      const e=easeOut(k);\n      const drift=Math.sin(absT*1.1+i*.35)*2.5;\n      const rot=Math.sin(absT*.9+c.seed*6)*.6;\n      const ty=(1-e)*90 + drift*0.25;\n      const scl=0.75+0.25*e;\n      const blur=(1-e)*3;\n      c.el.style.transform=`translateY(${ty}%) scale(${scl}) rotate(${rot}deg)`;\n      c.el.style.opacity=e;\n      c.el.style.filter=blur>0.1?`blur(${blur}px)`:'none';\n    });\n    const dx=breathe(absT,3,.4), dy=breathe(absT+2,2,.5);\n    wrap.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;\n  };\n}\n\nfunction subLine(text,{top='62%',size=22,delay=.3,diff=false}={}){\n  const e=el('div',(diff?'label diff':'label'),{\n    left:'50%',top,transform:'translate(-50%,-50%)',\n    fontSize:size+'px',fontWeight:'500',letterSpacing:'.01em',\n    opacity:'0',whiteSpace:'nowrap',maxWidth:'1500px'\n  },text);\n  return (t,absT)=>{\n    const k=clamp((t-delay)*2.5,0,1);\n    const drift=breathe(absT+1,2,.6);\n    e.style.opacity=easeOut(k);\n    e.style.transform=`translate(calc(-50% + ${drift}px), calc(-50% + ${(1-easeOut(k))*16}px))`;\n  };\n}\n\nconst scenes=[];\n\n// ============ SCENE 1: Opening title ============\nscenes.push({t0:0,t1:4.5,build(){\n  addStars();\n  const t1=bigTitle('Cosmic Scale',{top:'44%',size:200});\n  const t2=subLine('A field guide to the very, very large',{top:'60%',size:34,delay:.4});\n  const dot=el('div','circle',{width:'10px',height:'10px',top:'72%',opacity:'0'});\n  return (t,absT)=>{\n    twinkle(absT);\n    t1(t,absT);t2(t,absT);\n    dot.style.opacity=clamp((t-.5)*3,0,1);\n    dot.style.transform=`translate(-50%,-50%) scale(${1+breathe(absT,.3,2)})`;\n  };\n}});\n\n// ============ SCENE 2: Earth intro ============\nscenes.push({t0:4.5,t1:9,build(){\n  addStars();\n  const earth=el('div','circle',{width:'0px',height:'0px'});\n  const chap=el('div','label mono',{left:'50%',top:'10%',transform:'translate(-50%,0)',fontSize:'28px',fontWeight:'700',opacity:'0'},'CHAPTER ONE');\n  const cap=bigTitle('Earth',{top:'80%',size:110,delay:.25});\n  const sub=subLine('12,742 kilometers across',{top:'91%',size:28,delay:.5});\n  return (t,absT)=>{\n    twinkle(absT);\n    const d=easeOut(clamp(t*1.2,0,1))*300 + breathe(absT,2,.7);\n    earth.style.width=earth.style.height=d+'px';\n    chap.style.opacity=clamp(t*3,0,1);\n    cap(t,absT);sub(t,absT);\n  };\n}});\n\n// ============ SCENE 3: Earth → Moon ============\nscenes.push({t0:9,t1:16,build(){\n  addStars();\n  const earth=el('div','circle',{width:'90px',height:'90px',left:'12%',top:'55%'});\n  const moon=el('div','circle',{width:'24px',height:'24px',left:'12%',top:'55%',background:'#888'});\n  const line=el('div','',{position:'absolute',left:'12%',top:'55%',height:'1px',background:'#444',width:'0px',transformOrigin:'left center'});\n  const t1=bigTitle('384,400 km',{top:'22%',size:150,delay:.1});\n  const t2=subLine('Thirty Earths fit between us and the Moon',{top:'36%',size:34,delay:.45});\n  // 30 mini earths along the earth→moon line\n  const dots=[];\n  for(let i=0;i<30;i++){\n    const frac=(i+0.5)/30;\n    const x=12+frac*70;\n    const d=el('div','circle',{width:'14px',height:'14px',left:x+'%',top:'55%',opacity:'0'});\n    dots.push(d);\n  }\n  return (t,absT)=>{\n    twinkle(absT);\n    const p=easeInOut(clamp((t-.1)*1.1,0,1));\n    const xEnd=82;\n    moon.style.left=(12+p*(xEnd-12))+'%';\n    moon.style.top=(55+breathe(absT,.4,1.2))+'%';\n    line.style.width=(p*(xEnd-12))+'%';\n    earth.style.top=(55+breathe(absT+1,.3,1))+'%';\n    t1(t,absT);t2(t,absT);\n    dots.forEach((d,i)=>{d.style.opacity=clamp((t-.55-i*.015)*4,0,1);d.style.top=(55+breathe(absT+i*.3,.3,1))+'%';});\n  };\n}});\n\n// ============ SCENE 4: Sun massive reveal ============\nscenes.push({t0:16,t1:23,build(){\n  addStars();\n  const sun=el('div','circle',{width:'0px',height:'0px'});\n  const earth=el('div','circle',{width:'8px',height:'8px',left:'92%',top:'50%',opacity:'0'});\n  const earthLbl=el('div','label mono',{left:'92%',top:'55%',transform:'translate(-50%,0)',fontSize:'20px',fontWeight:'700',opacity:'0'},'EARTH');\n  const t1=bigTitle('1.3 million',{top:'30%',size:190,delay:.25,diff:true});\n  const t2=subLine('Earths would fit inside the Sun',{top:'46%',size:36,delay:.55,diff:true});\n  return (t,absT)=>{\n    twinkle(absT);\n    const p=easeOut(clamp(t*.85,0,1));\n    const d=p*1100 + breathe(absT,4,.5);\n    sun.style.width=sun.style.height=d+'px';\n    earth.style.opacity=clamp((t-.15)*3,0,1);\n    earth.style.top=(50+breathe(absT,.5,1.5))+'%';\n    earthLbl.style.opacity=clamp((t-.2)*3,0,1);\n    t1(t,absT);t2(t,absT);\n  };\n}});\n\n// ============ SCENE 5: Light travel time ============\nscenes.push({t0:23,t1:30,build(){\n  addStars();\n  const sun=el('div','circle',{width:'70px',height:'70px',left:'10%',top:'60%'});\n  const earth=el('div','circle',{width:'16px',height:'16px',left:'90%',top:'60%'});\n  const line=el('div','',{position:'absolute',left:'10%',right:'10%',top:'60%',height:'1px',background:'#333'});\n  const photon=el('div','circle',{width:'18px',height:'18px',left:'10%',top:'60%',background:'#fff',boxShadow:'0 0 30px #fff, 0 0 60px #fff'});\n  const t1=bigTitle('8 minutes, 20 seconds',{top:'22%',size:115,delay:.1});\n  const t2=subLine('For sunlight to reach your face',{top:'36%',size:32,delay:.45});\n  const timer=el('div','label mono',{left:'50%',top:'82%',transform:'translate(-50%,0)',fontSize:'72px',fontWeight:'900',opacity:'0'},'0:00');\n  return (t,absT)=>{\n    twinkle(absT);\n    const p=easeInOut(clamp((t-.15)*1.2,0,1));\n    photon.style.left=(10+p*80)+'%';\n    photon.style.top=(60+breathe(absT,.3,3))+'%';\n    sun.style.top=(60+breathe(absT,.4,.8))+'%';\n    t1(t,absT);t2(t,absT);\n    timer.style.opacity=clamp((t-.2)*3,0,1);\n    const secs=p*500;\n    timer.textContent=Math.floor(secs/60)+':'+String(Math.floor(secs%60)).padStart(2,'0');\n  };\n}});\n\n// ============ SCENE 6: Eight planets ============\nscenes.push({t0:30,t1:37,build(){\n  addStars();\n  const planets=[\n    {n:'Mercury',d:6,x:14},\n    {n:'Venus',d:12,x:20},\n    {n:'Earth',d:13,x:27},\n    {n:'Mars',d:9,x:34},\n    {n:'Jupitr',d:52,x:47,label:'Jupiter'},\n    {n:'Saturn',d:44,x:62},\n    {n:'Uranus',d:24,x:78},\n    {n:'Neptune',d:23,x:92},\n  ];\n  el('div','circle',{width:'90px',height:'90px',left:'4%',top:'55%'});\n  el('div','',{position:'absolute',left:'4%',right:'2%',top:'55%',height:'1px',background:'#333'});\n  const ps=planets.map(p=>{\n    const c=el('div','circle',{width:p.d+'px',height:p.d+'px',left:p.x+'%',top:'55%',opacity:'0'});\n    const l=el('div','label mono',{left:p.x+'%',top:'65%',transform:'translate(-50%,0)',fontSize:'17px',fontWeight:'700',opacity:'0'},(p.label||p.n).toUpperCase());\n    return {c,l};\n  });\n  const t1=bigTitle('Eight planets',{top:'22%',size:140});\n  const t2=subLine('Neptune orbits 30× farther than Earth',{top:'38%',size:32,delay:.45});\n  return (t,absT)=>{\n    twinkle(absT);\n    t1(t,absT);t2(t,absT);\n    ps.forEach((o,i)=>{\n      const k=clamp((t-.2-i*.08)*3,0,1);\n      o.c.style.opacity=easeOut(k);\n      o.l.style.opacity=easeOut(k);\n      o.c.style.top=(55+breathe(absT+i,.4,1+i*.1))+'%';\n    });\n  };\n}});\n\n// ============ SCENE 7: Betelgeuse comparison ============\nscenes.push({t0:37,t1:44,build(){\n  addStars();\n  const bet=el('div','circle',{width:'0px',height:'0px',left:'65%',top:'55%'});\n  const sun=el('div','circle',{width:'3px',height:'3px',left:'18%',top:'55%'});\n  const sunLbl=el('div','label mono',{left:'18%',top:'62%',transform:'translate(-50%,0)',fontSize:'20px',fontWeight:'700',opacity:'0'},'OUR SUN');\n  const arrow=el('div','label mono',{left:'18%',top:'50%',transform:'translate(-50%,-50%)',fontSize:'18px',fontWeight:'700',opacity:'0'},'↓');\n  const t1=bigTitle('700× wider',{top:'22%',size:180,delay:.2,diff:true});\n  const t2=subLine('Betelgeuse — a red supergiant',{top:'38%',size:34,delay:.5,diff:true});\n  return (t,absT)=>{\n    twinkle(absT);\n    const p=easeOut(clamp(t*.95,0,1));\n    const d=p*720 + breathe(absT,6,.4);\n    bet.style.width=bet.style.height=d+'px';\n    bet.style.top=(55+breathe(absT,.5,.6))+'%';\n    sunLbl.style.opacity=clamp(t*3,0,1);\n    arrow.style.opacity=clamp(t*3,0,1);\n    t1(t,absT);t2(t,absT);\n  };\n}});\n\n// ============ SCENE 8: Light years ============\nscenes.push({t0:44,t1:51,build(){\n  addStars();\n  const t1=bigTitle('4.24 light years',{top:'38%',size:170});\n  const t2=subLine('To Proxima Centauri — our nearest neighbor',{top:'54%',size:34,delay:.35});\n  const a=el('div','circle',{width:'18px',height:'18px',left:'18%',top:'78%',opacity:'0'});\n  const b=el('div','circle',{width:'14px',height:'14px',left:'82%',top:'78%',opacity:'0'});\n  const aLbl=el('div','label mono',{left:'18%',top:'85%',transform:'translate(-50%,0)',fontSize:'18px',fontWeight:'700',opacity:'0'},'SUN');\n  const bLbl=el('div','label mono',{left:'82%',top:'85%',transform:'translate(-50%,0)',fontSize:'18px',fontWeight:'700',opacity:'0'},'PROXIMA');\n  const line=el('div','',{position:'absolute',left:'18%',top:'78%',height:'1px',background:'#444',width:'0%'});\n  return (t,absT)=>{\n    twinkle(absT);\n    t1(t,absT);t2(t,absT);\n    const k=clamp((t-.5)*2.5,0,1);\n    a.style.opacity=b.style.opacity=aLbl.style.opacity=bLbl.style.opacity=k;\n    line.style.width=easeOut(clamp((t-.55)*1.8,0,1))*64+'%';\n    a.style.top=(78+breathe(absT,.4,1))+'%';\n    b.style.top=(78+breathe(absT+1,.4,1.2))+'%';\n  };\n}});\n\n// ============ SCENE 9: Milky Way ============\nscenes.push({t0:51,t1:59,build(){\n  addStars();\n  const g=el('div','',{position:'absolute',left:'50%',top:'55%',width:'520px',height:'520px',marginLeft:'-260px',marginTop:'-260px',opacity:'0'});\n  for(let i=0;i<380;i++){\n    const a=i*.26;const r=i*.68;\n    const d=document.createElement('div');\n    d.style.cssText=`position:absolute;left:${260+Math.cos(a)*r}px;top:${260+Math.sin(a)*r}px;width:2px;height:2px;background:#f2f2f2;border-radius:50%;opacity:${.3+Math.random()*.7}`;\n    g.appendChild(d);\n  }\n  const youMark=el('div','',{position:'absolute',left:'50%',top:'55%',width:'14px',height:'14px',marginLeft:'60px',marginTop:'-7px',border:'2px solid #fff',borderRadius:'50%',opacity:'0'});\n  const youLbl=el('div','label mono',{left:'50%',top:'55%',marginLeft:'82px',marginTop:'-10px',fontSize:'18px',fontWeight:'700',opacity:'0'},'YOU ARE HERE');\n  const t1=bigTitle('100,000 light years',{top:'16%',size:125,diff:true});\n  const t2=subLine('Across — home to 400 billion stars',{top:'30%',size:34,delay:.45,diff:true});\n  return (t,absT)=>{\n    twinkle(absT);\n    g.style.opacity=easeOut(clamp(t*1.6,0,1));\n    g.style.transform=`rotate(${absT*6}deg)`;\n    youMark.style.opacity=clamp((t-.45)*3,0,1);\n    youLbl.style.opacity=clamp((t-.55)*3,0,1);\n    t1(t,absT);t2(t,absT);\n  };\n}});\n\n// ============ SCENE 10: Observable universe ============\nscenes.push({t0:59,t1:66,build(){\n  addStars();\n  const ring=el('div','ring',{width:'0px',height:'0px'});\n  const ring2=el('div','ring',{width:'0px',height:'0px',opacity:'.35',borderWidth:'1px'});\n  const core=el('div','circle',{width:'4px',height:'4px'});\n  const t1=bigTitle('93 billion light years',{top:'22%',size:135,diff:true});\n  const t2=subLine('The observable universe, edge to edge',{top:'38%',size:34,delay:.45,diff:true});\n  return (t,absT)=>{\n    twinkle(absT);\n    const p=easeOut(clamp(t*1.0,0,1));\n    const d=p*640 + breathe(absT,6,.3);\n    ring.style.width=ring.style.height=d+'px';\n    ring2.style.width=ring2.style.height=d*1.35+'px';\n    ring.style.transform=`translate(-50%,-50%) rotate(${absT*3}deg)`;\n    ring2.style.transform=`translate(-50%,-50%) rotate(${-absT*2}deg)`;\n    t1(t,absT);t2(t,absT);\n  };\n}});\n\n// ============ SCENE 11: Closing (pause for effect) ============\nscenes.push({t0:66,t1:74,build(){\n  addStars();\n  const dot=el('div','circle',{width:'6px',height:'6px',opacity:'0'});\n  const t1=bigTitle('A pale blue dot',{top:'42%',size:140,delay:.1});\n  const t2=subLine('Suspended in a sunbeam',{top:'58%',size:34,delay:.5});\n  const end=el('div','label mono',{left:'50%',top:'90%',transform:'translate(-50%,0)',fontSize:'20px',fontWeight:'700',opacity:'0'},'— END —');\n  return (t,absT)=>{\n    twinkle(absT);\n    dot.style.opacity=clamp(t*3,0,1);\n    dot.style.transform=`translate(-50%,-50%) scale(${1+breathe(absT,.4,1.5)})`;\n    t1(t,absT);t2(t,absT);\n    end.style.opacity=clamp((t-.75)*3,0,1);\n  };\n}});\n\nconst DURATION=scenes[scenes.length-1].t1;\nlet currentIdx=-1, currentUpdate=()=>{};\n\nfunction goTo(absT){\n  absT=clamp(absT,0,DURATION);\n  let idx=scenes.findIndex(s=>absT>=s.t0 && absT<s.t1);\n  if(idx<0)idx=scenes.length-1;\n  if(idx!==currentIdx){\n    scene.innerHTML='';\n    currentIdx=idx;\n    currentUpdate=scenes[idx].build();\n  }\n  const s=scenes[idx];\n  const localT=(absT-s.t0)/(s.t1-s.t0);\n  currentUpdate(localT,absT);\n  const mm=Math.floor(absT/60),ss=Math.floor(absT%60);\n  video.setAttribute('data-screen-label',String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0'));\n}\n\n// Playback\nlet playing=false,last=0,cur=0;\nconst pp=document.getElementById('pp'),ppIcon=document.getElementById('ppIcon'),tLbl=document.getElementById('t');\nconst scrubWrap=document.getElementById('scrubWrap'),prog=document.getElementById('prog'),hoverMark=document.getElementById('hoverMark'),tip=document.getElementById('tip');\nconst fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');\nconst PLAY='<polygon points=\"2,1 11,6 2,11\"/>';\nconst PAUSE='<rect x=\"2\" y=\"1\" width=\"3\" height=\"10\"/><rect x=\"7\" y=\"1\" width=\"3\" height=\"10\"/>';\nfunction tick(ts){\n  if(!last)last=ts;\n  const dt=(ts-last)/1000;last=ts;\n  if(playing){\n    cur+=dt;\n    if(cur>=DURATION){cur=DURATION;playing=false;ppIcon.innerHTML=PLAY;}\n  }\n  goTo(preview!=null?preview:cur);\n  prog.style.width=(cur/DURATION)*100+'%';\n  tLbl.textContent=fmt(cur)+' / '+fmt(DURATION);\n  requestAnimationFrame(tick);\n}\npp.onclick=()=>{playing=!playing;ppIcon.innerHTML=playing?PAUSE:PLAY;last=0;};\n\nlet dragging=false, preview=null;\nfunction seekFromEvent(e){\n  const r=scrubWrap.getBoundingClientRect();\n  const p=clamp((e.clientX-r.left)/r.width,0,1);\n  return p*DURATION;\n}\nscrubWrap.addEventListener('mousedown',e=>{dragging=true;cur=seekFromEvent(e);preview=null;});\nwindow.addEventListener('mousemove',e=>{\n  if(dragging){cur=seekFromEvent(e);return;}\n  const r=scrubWrap.getBoundingClientRect();\n  if(e.clientY>=r.top-20 && e.clientY<=r.bottom+20 && e.clientX>=r.left && e.clientX<=r.right){\n    const p=(e.clientX-r.left)/r.width;\n    hoverMark.style.left=(p*100)+'%';\n    hoverMark.style.opacity='1';\n    tip.style.left=(p*100)+'%';\n    tip.style.opacity='1';\n    tip.textContent=fmt(p*DURATION);\n    preview=p*DURATION;\n  }else{hoverMark.style.opacity='0';tip.style.opacity='0';preview=null;}\n});\nwindow.addEventListener('mouseup',()=>{dragging=false;});\ndocument.getElementById('rw').onclick=()=>{cur=0;playing=false;ppIcon.innerHTML=PLAY;};\nrequestAnimationFrame(tick);\n\nfunction fit(){\n  const s=Math.min(window.innerWidth/1600, (window.innerHeight-44)/900);\n  document.getElementById('wrap').style.transform=`scale(${s})`;\n}\nnew ResizeObserver(fit).observe(document.body);fit();\n<\u002Fscript>\n\n\n<\u002Fbody><\u002Fhtml>"
+    </script>
 </body>
 </html>
