@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLAR SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>SOLAR SYSTEM</h1>
+    <div id="sidebar">
+        <button id="closeButton">&times;</button>
+        <h2 id="planetName"></h2>
+        <p id="planetInfo"></p>
+        <img id="planetGif" src="" alt="Planet Gif" style="width:100%; height:auto;" />
+        <table id="planetDetails">
+            <tr>
+                <th>Characteristic</th>
+                <th>Value</th>
+            </tr>
+            <!-- The data for the selected planet will be inserted here -->
+        </table>
+    </div>
+    <!-- Include Three.js and OrbitControls from CDN -->
+    <script src="{{ url_for('static', filename='js/three.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/GLTFLoader.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/OrbitControls.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
